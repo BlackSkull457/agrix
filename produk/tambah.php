@@ -14,7 +14,24 @@ if (isset($_POST['simpan'])) {
     $stok     = (int) $_POST['stok'];
     $harga    = (int) $_POST['harga'];
     $deskripsi = mysqli_real_escape_string($conn, $_POST['deskripsi']);
-    $foto     = ''; // Placeholder for file upload
+    $foto     = '';
+
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = '../uploads/produk/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $fileName = basename($_FILES['foto']['name']);
+        $fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
+        $safeName = preg_replace('/[^A-Za-z0-9._-]/', '_', pathinfo($fileName, PATHINFO_FILENAME));
+        $newName = time() . '_' . $safeName . '.' . $fileExt;
+        $targetPath = $uploadDir . $newName;
+
+        if (move_uploaded_file($_FILES['foto']['tmp_name'], $targetPath)) {
+            $foto = 'uploads/produk/' . $newName;
+        }
+    }
 
     mysqli_query($conn, "INSERT INTO produk (user_id, nama_produk, kategori, kualitas, stok, harga_jual, deskripsi, foto) VALUES ('$user_id', '$nama', '$kategori', '$kualitas', '$stok', '$harga', '$deskripsi', '$foto')");
     header('Location: index.php');

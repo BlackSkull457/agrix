@@ -116,6 +116,7 @@ $categoryQuery = mysqli_query($conn, "SELECT DISTINCT kategori FROM produk $filt
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>Foto</th>
                                 <th>Nama Produk</th>
                                 <th>Kategori</th>
                                 <th>Kualitas</th>
@@ -133,6 +134,13 @@ $categoryQuery = mysqli_query($conn, "SELECT DISTINCT kategori FROM produk $filt
                             ?>
                                 <tr>
                                     <td><?= $no++ ?></td>
+                                    <td>
+                                        <?php if (!empty($row['foto'])): ?>
+                                            <img src="../<?= htmlspecialchars($row['foto']) ?>" alt="<?= htmlspecialchars($row['nama_produk']) ?>" class="product-thumb">
+                                        <?php else: ?>
+                                            <div class="product-thumb-placeholder">📦</div>
+                                        <?php endif; ?>
+                                    </td>
                                     <td><strong><?= htmlspecialchars($row['nama_produk']) ?></strong></td>
                                     <td><?= htmlspecialchars($row['kategori']) ?></td>
                                     <td><?= htmlspecialchars($row['kualitas']) ?></td>
@@ -149,7 +157,16 @@ $categoryQuery = mysqli_query($conn, "SELECT DISTINCT kategori FROM produk $filt
                                 </tr>
                             <?php endwhile; else: ?>
                                 <tr>
-                                    <td colspan="9">Tidak ada produk ditemukan.</td>
+                                    <td colspan="10">
+                                        <div class="table-placeholder">
+                                            <div class="placeholder-icon">📦</div>
+                                            <div>
+                                                <h3>Belum ada produk</h3>
+                                                <p>Tambahkan produk pertama Anda untuk mulai menampilkan daftar di sini.</p>
+                                                <a href="tambah.php" class="btn-primary">Tambah Produk</a>
+                                            </div>
+                                        </div>
+                                    </td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>

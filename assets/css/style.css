@@ -1276,6 +1276,50 @@ button, input, select, textarea {
     background: #f9fafb;
 }
 
+.product-thumb {
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+}
+
+.product-thumb-placeholder {
+    width: 56px;
+    height: 56px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #f3f4f6;
+    color: #6b7280;
+    font-size: 24px;
+}
+
+.table-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 28px 20px;
+    text-align: center;
+    color: #64748b;
+}
+
+.table-placeholder .placeholder-icon {
+    font-size: 38px;
+    line-height: 1;
+}
+
+.table-placeholder h3 {
+    margin: 0 0 6px;
+    color: #1f2937;
+}
+
+.table-placeholder p {
+    margin: 0 0 14px;
+}
+
 .btn-primary {
     background: #22c55e;
     color: #ffffff;

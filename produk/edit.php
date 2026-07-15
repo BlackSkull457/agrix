@@ -28,8 +28,26 @@ if (isset($_POST['update'])) {
     $stok     = (int) $_POST['stok'];
     $harga    = (int) $_POST['harga_jual'];
     $deskripsi = mysqli_real_escape_string($conn, $_POST['deskripsi']);
+    $foto = $data['foto'];
 
-    mysqli_query($conn, "UPDATE produk SET nama_produk='$nama', kategori='$kategori', kualitas='$kualitas', stok='$stok', harga_jual='$harga', deskripsi='$deskripsi' WHERE produk_id='$id'");
+    if (isset($_FILES['foto']) && $_FILES['foto']['error'] === UPLOAD_ERR_OK) {
+        $uploadDir = '../uploads/produk/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        $fileName = basename($_FILES['foto']['name']);
+        $fileExt = pathinfo($fileName, PATHINFO_EXTENSION);
+        $safeName = preg_replace('/[^A-Za-z0-9._-]/', '_', pathinfo($fileName, PATHINFO_FILENAME));
+        $newName = time() . '_' . $safeName . '.' . $fileExt;
+        $targetPath = $uploadDir . $newName;
+
+        if (move_uploaded_file($_FILES['foto']['tmp_name'], $targetPath)) {
+            $foto = 'uploads/produk/' . $newName;
+        }
+    }
+
+    mysqli_query($conn, "UPDATE produk SET nama_produk='$nama', kategori='$kategori', kualitas='$kualitas', stok='$stok', harga_jual='$harga', deskripsi='$deskripsi', foto='$foto' WHERE produk_id='$id'");
     header('Location: index.php');
     exit;
 }
