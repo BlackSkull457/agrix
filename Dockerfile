@@ -11,15 +11,28 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install mysqli pdo pdo_mysql gd zip
 
-# Disable conflicting MPM modules and enable only mpm_prefork
-RUN a2dismod mpm_event mpm_worker || true && \
-    a2enmod mpm_prefork rewrite && \
-    rm -f /etc/apache2/mods-enabled/mpm_event.load /etc/apache2/mods-enabled/mpm_worker.load
+# Completely remove conflicting MPM modules before enabling mpm_prefork
+RUN apt-get remove -y apache2-mpm-worker apache2-mpm-event || true && \
+    a2dismod mpm_event mpm_worker || true && \
+    rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.* && \
+    a2enmod mpm_prefork rewrite
+
+# Copy Apache configuration files
+COPY 000-default.conf /etc/apache2/sites-available/000-default.conf
+COPY mpm.conf /etc/apache2/mods-available/mpm_prefork.conf
+
+# Ensure only mpm_prefork is loaded
+RUN mkdir -p /etc/apache2/mods-enabled && \
+    ln -sf /etc/apache2/mods-available/mpm_prefork.load /etc/apache2/mods-enabled/mpm_prefork.load && \
+    ln -sf /etc/apache2/mods-available/mpm_prefork.conf /etc/apache2/mods-enabled/mpm_prefork.conf && \
+    rm -f /etc/apache2/mods-enabled/mpm_event.* /etc/apache2/mods-enabled/mpm_worker.*
 
 COPY . /var/www/html/
+COPY entrypoint.sh /entrypoint.sh
 
-RUN chown -R www-data:www-data /var/www/html
+RUN chmod +x /entrypoint.sh && \
+    chown -R www-data:www-data /var/www/html
 
 EXPOSE 80
 
-CMD ["apache2-foreground"]
+ENTRYPOINT ["/entrypoint.sh"]
