@@ -19,12 +19,16 @@ $latest_updates = mysqli_query($conn, "SELECT * FROM harga_pasar ORDER BY waktu_
 $recent_activities = mysqli_query($conn, "SELECT jenis, pesan, waktu, status FROM notifikasi ORDER BY waktu DESC LIMIT 5");
 
 $price_history = mysqli_query($conn, "
-    SELECT DATE(waktu_update) AS tanggal,
-           DATE_FORMAT(waktu_update, '%d %b') AS label,
-           AVG(harga) AS avg_harga
+    SELECT
+        DATE(waktu_update) AS tanggal,
+        DATE_FORMAT(waktu_update, '%d %b') AS label,
+        AVG(harga) AS avg_harga
     FROM harga_pasar
-    GROUP BY DATE(waktu_update)
-    ORDER BY DATE(waktu_update) ASC
+    GROUP BY
+        DATE(waktu_update),
+        DATE_FORMAT(waktu_update, '%d %b')
+    ORDER BY
+        DATE(waktu_update) ASC
 ");
 $price_comparison = mysqli_query($conn, "
     SELECT current.nama_komoditas,
