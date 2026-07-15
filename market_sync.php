@@ -71,11 +71,22 @@ if (!function_exists('syncExternalMarketData')) {
         ]
     ]);
 
-    $html = @file_get_contents($url, false, $context);
-    if ($html === false || stripos($html, 'NAMA BAHAN POKOK') === false) {
+    $fetchResult = fetchUrl($url, $context);
+    if ($fetchResult['success'] === false) {
         return [
             'success' => false,
-            'message' => 'Gagal mengambil konten dari SISKAPERBAPO.',
+            'message' => 'Gagal mengambil konten dari SISKAPERBAPO. ' . $fetchResult['error'],
+            'inserted' => 0,
+            'updated' => 0,
+            'timestamp' => date('d/m/Y H:i:s')
+        ];
+    }
+
+    $html = $fetchResult['content'];
+    if ($html === '' || stripos($html, 'NAMA BAHAN POKOK') === false) {
+        return [
+            'success' => false,
+            'message' => 'Tabel data harga tidak ditemukan atau konten tidak sesuai.',
             'inserted' => 0,
             'updated' => 0,
             'timestamp' => date('d/m/Y H:i:s')
@@ -157,6 +168,42 @@ if (!function_exists('syncExternalMarketData')) {
             'updated' => $updated,
             'timestamp' => date('d/m/Y H:i:s')
         ];
+    }
+}
+
+if (!function_exists('fetchUrl')) {
+    function fetchUrl($url, $context = null) {
+        if (function_exists('curl_version')) {
+            $ch = curl_init();
+            curl_setopt($ch, CURLOPT_URL, $url);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
+            curl_setopt($ch, CURLOPT_TIMEOUT, 20);
+            curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0');
+            curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+            curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, false);
+            curl_setopt($ch, CURLOPT_HTTPHEADER, [
+                'Accept-Language: id-ID,id;q=0.9,en;q=0.8'
+            ]);
+
+            $result = curl_exec($ch);
+            if ($result === false) {
+                $errorMessage = curl_error($ch);
+                curl_close($ch);
+                return ['success' => false, 'content' => '', 'error' => $errorMessage];
+            }
+
+            curl_close($ch);
+            return ['success' => true, 'content' => $result, 'error' => ''];
+        }
+
+        $content = @file_get_contents($url, false, $context);
+        if ($content === false) {
+            $error = error_get_last();
+            return ['success' => false, 'content' => '', 'error' => $error['message'] ?? 'Unknown fetch error'];
+        }
+
+        return ['success' => true, 'content' => $content, 'error' => ''];
     }
 }
 ?>

@@ -8,8 +8,9 @@ RUN apt-get update && apt-get install -y \
     libjpeg62-turbo-dev \
     libfreetype6-dev \
     libonig-dev \
+    libcurl4-openssl-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install mysqli pdo pdo_mysql gd zip
+    && docker-php-ext-install mysqli pdo pdo_mysql gd zip curl
 
 # Completely remove conflicting MPM modules before enabling mpm_prefork
 RUN apt-get remove -y apache2-mpm-worker apache2-mpm-event || true && \
