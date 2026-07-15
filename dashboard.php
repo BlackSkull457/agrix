@@ -94,7 +94,6 @@ if (empty($marketLabels)) {
                     <?php endif; ?>
                 </a>
                 <div class="profile-section">
-                    <img src="assets/images/avatar.png" alt="Profile" class="profile-avatar">
                     <span class="profile-name"><?= htmlspecialchars($displayName) ?></span>
                 </div>
             </div>
