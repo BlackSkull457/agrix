@@ -1,0 +1,9 @@
+Options -Indexes
+
+DirectoryIndex index.php
+
+RewriteEngine On
+
+<FilesMatch "\.(env|ini|log)$">
+    Require all denied
+</FilesMatch>
