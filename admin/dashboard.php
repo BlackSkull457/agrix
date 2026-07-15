@@ -127,7 +127,6 @@ if (empty($compare_labels)) {
                     <span class="notif-icon">🔔</span>
                 </button>
                 <div class="profile-section">
-                    <img src="../assets/images/admin-avatar.png" alt="Admin" class="profile-avatar">
                     <span class="profile-name">Admin</span>
                 </div>
             </div>
